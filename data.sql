@@ -22,14 +22,18 @@ SET time_zone = "+00:00";
 --
 
 DELIMITER $$
---
--- Functions
---
-CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR` (`x` VARCHAR(255), `delim` VARCHAR(12), `pos` INT) RETURNS VARCHAR(255) CHARSET utf8mb4 COLLATE utf8mb4_general_ci  RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
-       CHAR_LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
-       delim, "")$$
+
+CREATE FUNCTION SPLIT_STR_SIMPLE(x VARCHAR(255), delim VARCHAR(12), pos INT) RETURNS VARCHAR(255)
+BEGIN
+  DECLARE result VARCHAR(255);
+  SET result = REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
+                    CHAR_LENGTH(SUBSTRING_INDEX(x, delim, pos - 1)) + 1),
+                    delim, "");
+  RETURN result;
+END$$
 
 DELIMITER ;
+
 
 -- --------------------------------------------------------
 
@@ -1401,8 +1405,9 @@ CREATE TABLE `history_event` (
   `id` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `point` int(11) DEFAULT 0,
-  `created` date DEFAULT current_timestamp()
+  `created` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- --------------------------------------------------------
 
@@ -8234,6 +8239,7 @@ INSERT INTO `part` (`id`, `TYPE`, `DATA`) VALUES
 -- Table structure for table `player`
 --
 
+-- Tạo bảng player
 CREATE TABLE `player` (
   `id` int(11) NOT NULL,
   `account_id` int(11) DEFAULT NULL,
@@ -8269,8 +8275,10 @@ CREATE TABLE `player` (
   `NguHanhSonPoint` int(11) DEFAULT 0,
   `data_card` text NOT NULL,
   `bill_data` text NOT NULL,
-  `data_item_time_sieu_cap` text NOT NULL DEFAULT '[0,0,0,0,0]'
+  `data_item_time_sieu_cap` VARCHAR(255) NOT NULL DEFAULT '[0,0,0,0,0]'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+
 
 --
 -- Dumping data for table `player`
@@ -8591,6 +8599,7 @@ INSERT INTO `shop` (`id`, `npc_id`, `tag_name`, `type_shop`) VALUES
 -- Table structure for table `shop_ky_gui`
 --
 
+-- Tạo bảng shop_ky_gui
 CREATE TABLE `shop_ky_gui` (
   `id` int(11) NOT NULL,
   `player_id` int(11) NOT NULL,
@@ -8599,10 +8608,11 @@ CREATE TABLE `shop_ky_gui` (
   `gold` int(11) NOT NULL,
   `gem` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
-  `itemOption` text NOT NULL DEFAULT '[]',
+  `itemOption` text NOT NULL,
   `isUpTop` int(11) NOT NULL,
   `isBuy` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 
 --
 -- Dumping data for table `shop_ky_gui`
@@ -25209,13 +25219,17 @@ INSERT INTO `task_sub_template` (`task_main_id`, `NAME`, `max_count`, `notify`, 
 -- Table structure for table `token`
 --
 
+-- Tạo bảng token
 CREATE TABLE `token` (
   `token_id` bigint(20) NOT NULL,
   `CODE` varchar(50) NOT NULL,
-  `created` date DEFAULT curdate(),
+  `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `account_id` int(11) NOT NULL,
   `expiry` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
 
 -- --------------------------------------------------------
 
